@@ -3,7 +3,7 @@ import os
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 
-MAX_WORKER = 15
+MAX_WORKER = 100
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV_DIR = os.path.dirname(BASE_DIR)

@@ -1,9 +1,12 @@
 import re, os, platform
-import xlrd
-from string import ascii_letters
+from pprint import pprint
 from random import sample
+from string import ascii_letters
 from unicodedata import normalize
 from collections import OrderedDict
+
+import xlrd
+from bs4.element import Tag, NavigableString
 
 
 
@@ -21,7 +24,17 @@ def get_edi_code_from_xl(xl_file):
     return list(OrderedDict.fromkeys(edis))
 
 def br_to_linebreak(td):
-    contents = [ch for ch in td.children if isinstance(ch, str)]
+    contents = []
+    for ch in td.children:
+        if isinstance(ch, Tag):
+            contents.append(br_to_linebreak(ch))
+        elif isinstance(ch, NavigableString):
+            ch = ch.strip()
+            if re.search(r'\[.+\]', ch):
+                continue
+            if re.match(r'\(.+\)', ch):
+                continue
+            contents.append(ch)
     contents = map(lambda s: normalize('NFKC', s).strip(), contents)
     return '\n'.join(contents)
 

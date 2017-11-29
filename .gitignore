@@ -6,5 +6,5 @@ health.egg-info/
 build/
 .DS_Store
 *.json
-*.html
+
 

@@ -10,9 +10,8 @@ except:
 
 test_file = '약품정보.xls'
 
-edis = get_edi_code_from_xl(test_file)[785:]
 
-# edis = ['647802630']
+edis = ['644900310', '648900030', '641600030']
 
 print('total edi count: ', len(edis))
 
@@ -25,7 +24,6 @@ for i, edi in enumerate(edis):
         print('\t\tparsing detail: {}...'.format(url))
         detail_soup = get_detail_soup(url)
         record = parse_detail_soup(detail_soup)
-        # pprint(record, indent=10)
         records.append(record)
 
 

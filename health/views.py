@@ -24,8 +24,8 @@ def get_records(queries, excel_file=None):
 def get_picture_html(records, columns=5, output_html=None):
     template = env.get_template('drug_picture.html')
     object_lists = []
-    pages = len(records) // columns
-    for i in range(pages+1):
+    
+    for i in range(0, len(records), columns):
         object_lists.append(records[i:i+columns])
 
     html = template.render(object_lists=object_lists)

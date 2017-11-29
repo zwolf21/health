@@ -3,13 +3,12 @@ import re, os, sys
 from unicodedata import normalize
 from urllib.parse import quote, urljoin
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
+from collections import OrderedDict
 
 import requests
 from tqdm import tqdm
 from listorm import Listorm
 from bs4 import BeautifulSoup
-
 
 try:
     from settings import *
@@ -36,8 +35,9 @@ def get_search_list_soup(keyword):
 
 def get_detail_urls(list_soup):
     host = 'http://www.health.kr/drug_info/basedrug/'
-    detail_url_regex = re.compile(r'show_detail.asp\?idx=(?P<id>\d+)')
-    return [urljoin(host, a['href']) for a in list_soup('a', href=detail_url_regex)]
+    detail_url_regex = re.compile(r'^show_detail.asp\?idx=(?P<id>\d+)$')
+    urls =  [urljoin(host, a['href']) for a in list_soup('a', href=detail_url_regex)]
+    return list(OrderedDict.fromkeys(urls))
 
 def get_detail_soup(detail_url):
     r = requests.get(detail_url, headers=HEADERS)
@@ -88,11 +88,16 @@ def _parse_edi(td):
         delete_g = re.search(r'삭제', info) or False
         date_g = re.search(r'(?P<date>\d{4}-\d{2}-\d{2})', info)
         if price_g:
-            ret['price'] = price_g.group('price')
+            try:
+                price = int(price_g.group('price'))
+            except:
+                price = 0
+        else:
+            price = 0
+        ret['price'] = price
 
         if date_g:
             ret['apply_date'] = date_g.group(('date'))
-
         ret['deleted'] = bool(delete_g)
     return ret
 
@@ -207,7 +212,7 @@ def get_search_detail_url_thread(*keywords):
         for keyword in keywords:
             future = executor.submit(get_search_list_soup, keyword)
             todo_list.append(future)
-
+        print('Collecting detail urls(workers: {})...'.format(wokers))
         done_iter = tqdm(as_completed(todo_list), total=keywords_count)
         for future in done_iter:
             list_soup = future.result()
@@ -223,7 +228,8 @@ def parse_detail_thread(*detail_urls):
         for url in detail_urls:
             future = executor.submit(get_detail_soup, url)
             todo_list.append(future)
-        for done in as_completed(todo_list):
+        print('Parsing details...')
+        for done in tqdm(as_completed(todo_list), total=len(detail_urls)):
             detail_soup = done.result()
             record = parse_detail_soup(detail_soup)
             records.append(record)
