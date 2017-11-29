@@ -1,0 +1,10 @@
+*.xls*
+.vscode/
+__pycache__/
+dist/
+druginfo.egg-info/
+build/
+.DS_Store
+*.json
+*.html
+
