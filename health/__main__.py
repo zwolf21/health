@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pprint import pprint
 import json
 import re, os, time, argparse, platform, getpass

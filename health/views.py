@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 from pprint import pprint
 import os
 
 from listorm import read_excel, Listorm
-
 
 try:
     from health import *
@@ -31,7 +31,7 @@ def get_picture_html(records, columns=5, output_html=None):
     html = template.render(object_lists=object_lists)
 
     if output_html:
-        with open(output_html, 'wt') as fp:
+        with open(output_html, 'wt', encoding='utf-8') as fp:
             fp.write(html)
     else:
         return html

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re, os, platform
 from pprint import pprint
 from random import sample
