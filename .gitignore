@@ -2,7 +2,7 @@
 .vscode/
 __pycache__/
 dist/
-druginfo.egg-info/
+health.egg-info/
 build/
 .DS_Store
 *.json
